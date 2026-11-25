@@ -97,8 +97,13 @@ remaining open (accepted-risk or design-level) findings.
 
 ```bash
 rustup target add wasm32-unknown-unknown
+```
+**Success:** `rustup show` lists `wasm32-unknown-unknown` under "installed targets". If this fails, check your Rust toolchain version (`rustup --version`) and re-run `rustup update`.
+
+```bash
 cargo install --locked stellar-cli --features opt
 ```
+**Success:** `stellar --version` prints a version ≥ 22.x. If the install fails, verify your Rust toolchain is 1.81+ and your internet connection is active.
 
 ### First-time setup
 
@@ -107,16 +112,14 @@ After cloning, run the one-time setup to install the pre-commit hook:
 ```bash
 make setup
 ```
-
-This registers `.git-hooks/pre-commit` so that every commit automatically
-runs `cargo fmt --check` and `cargo clippy` before it is accepted locally —
-the same checks CI enforces.
+**Success:** the terminal prints `Pre-commit hook installed.` and subsequent `git commit` invocations run `cargo fmt --check` and `cargo clippy` automatically before accepting the commit. If `make` is not found, install it via your OS package manager or see the prerequisites above.
 
 ### Run the full check suite
 
 ```bash
 make check
 ```
+**Success:** all four stages — fmt, clippy, test, wasm — complete with no errors, and the terminal exits with code 0. If any stage fails, re-run it individually (e.g. `make fmt`, `make clippy`) to isolate the problem; the error output names the file and line.
 
 `make check` runs **fmt → clippy → test → wasm build** in order, using
 exactly the same flags as the CI job. A green `make check` on your machine
@@ -136,10 +139,14 @@ means the same commit will pass CI.
 ```bash
 # Debug build
 make build
+```
+**Success:** the terminal prints `Finished dev [unoptimized + debuginfo]` with no errors. Use this for fast iteration; it does not produce a deployable WASM.
 
+```bash
 # Release wasm artefact
 make wasm
 ```
+**Success:** the terminal prints `Finished release [optimized]` and writes the WASM binary to `target/wasm32-unknown-unknown/release/`. If the build fails with a linker error, confirm the `wasm32-unknown-unknown` target is installed (`rustup target list --installed`).
 
 ### Test
 
@@ -148,6 +155,7 @@ make test
 # or directly:
 cargo test
 ```
+**Success:** the terminal reports all tests passed (`test result: ok. N passed`). A failure line names the test and the assertion that broke; run `cargo test <test_name> -- --nocapture` to see its output in full.
 
 ### Deploy
 
