@@ -222,6 +222,23 @@ upgrade-boundary guarantees are documented in [`DECISIONS.md`](./DECISIONS.md).
 Only temporary storage (idempotency keys) is evicted — acceptable because their
 TTL is short and the contract rejects duplicates via existing transaction records.
 
+**Upgrade history.** Each successful upgrade appends a record to the bounded
+upgrade history (capped at `MAX_UPGRADE_HISTORY` entries, oldest evicted first).
+Every record includes:
+
+| Field | Type | Description |
+|---|---|---|
+| `new_wasm_hash` | `BytesN<32>` | Hash of the WASM installed by this upgrade |
+| `admin` | `Address` | Admin address that authorized the upgrade |
+| `ledger` | `u32` | Ledger sequence at which the upgrade was applied |
+| `schema_version` | `u32` | On-chain schema version the upgrade was validated against |
+
+The `schema_version` field lets a caller reading `get_upgrade_history()` match
+each history entry to the schema it was applied at, without having to cross-reference
+`CHANGELOG.md` or deployment notes. It is populated from the live `schema_version()`
+value at the moment the upgrade executes. See `src/migration.rs` (`UpgradeSnapshot`)
+for the capture logic and `src/test_upgrade_safety.rs` for the round-trip assertion.
+
 **Trust requirement:** The admin key **MUST** be held by a multisig (≥3-of-5) or
 a DAO.  Admin-key compromise allows arbitrary WASM deployment, not just role
 rotation.  See [`DECISIONS.md`](./DECISIONS.md#6-trust-assumptions) for the full

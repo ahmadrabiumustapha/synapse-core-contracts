@@ -227,6 +227,39 @@ fn test_upgrade_rollback_history_round_trip() {
     assert_eq!(client.previous_upgrade().unwrap().wasm_hash, pre);
     assert!(!client.last_upgrade_migrated());
 
+    // The snapshot carries the schema version it was captured at (issue #476).
+    assert_eq!(
+        client.previous_upgrade().unwrap().schema_version,
+        SCHEMA_VERSION,
+        "UpgradeSnapshot must record the schema version at capture time"
+    );
+
     // Rollback guard path is clear; attempting the swap
+}
+
+// ─── #476 schema version in upgrade history records ───────────────────────────
+
+#[test]
+fn test_upgrade_snapshot_carries_schema_version() {
+    // UpgradeSnapshot must record the live schema version so that a caller
+    // reading get_upgrade_history() can tell which schema each entry was
+    // applied at. Seed a snapshot directly, persist it, reload it, and assert
+    // the schema_version field is preserved exactly.
+    let (env, _client, contract_id) = setup();
+
+    env.as_contract(&contract_id, || {
+        let snapshot = UpgradeSnapshot {
+            wasm_hash: BytesN::from_array(&env, &[0xcc; 32]),
+            schema_version: SCHEMA_VERSION,
+            captured_at_ledger: env.ledger().sequence(),
+        };
+        snapshot.store(&env);
+
+        let loaded = UpgradeSnapshot::load(&env).expect("snapshot must be stored");
+        assert_eq!(
+            loaded.schema_version, SCHEMA_VERSION,
+            "schema_version must round-trip through storage unchanged"
+        );
+    });
 }
 

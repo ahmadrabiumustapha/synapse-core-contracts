@@ -513,6 +513,11 @@ fn test_simulate_upgrade_matches_real_upgrade_guards() {
         assert_eq!(hist.len(), 1);
         assert_eq!(hist.get_unchecked(0).new_wasm_hash, hash);
         assert_eq!(hist.get_unchecked(0).admin, admin);
+        assert_eq!(
+            hist.get_unchecked(0).schema_version,
+            1,
+            "upgrade history record must carry the schema version it was applied at"
+        );
     });
 }
 
