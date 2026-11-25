@@ -59,6 +59,7 @@ schema_version = 1
 struct_name = "EventInitialised"
 topic       = "init"
 emitter_fn  = "initialised"
+description = "Asserts that the contract emits an 'init' event carrying the admin and relay_signer addresses on first-time initialisation."
 
 [[event.fields]]
 name = "admin"
@@ -78,6 +79,7 @@ type = "u32"
 struct_name = "EventTransactionRegistered"
 topic       = "reg"
 emitter_fn  = "transaction_registered"
+description = "Asserts that register_callback emits a 'reg' event with the new tx_id, stellar account, amount, asset code, anchor transaction id, and ledger sequence."
 
 [[event.fields]]
 name = "tx_id"
@@ -109,6 +111,7 @@ type = "u32"
 struct_name = "EventStatusChanged"
 topic       = "status"
 emitter_fn  = "status_changed"
+description = "Asserts that status-transition entry points emit a 'status' event carrying the tx_id, old and new TransactionStatus values, and the ledger sequence."
 
 [[event.fields]]
 name = "tx_id"
@@ -132,6 +135,7 @@ type = "u32"
 struct_name = "EventTransactionCompleted"
 topic       = "done"
 emitter_fn  = "transaction_completed"
+description = "Asserts that complete_transaction emits a 'done' event with the tx_id, the Stellar transaction hash, and the ledger sequence, always after the 'status' event in the same invocation."
 
 [[event.fields]]
 name = "tx_id"
@@ -151,6 +155,7 @@ type = "u32"
 struct_name = "EventTransactionFailed"
 topic       = "fail"
 emitter_fn  = "transaction_failed"
+description = "Asserts that fail_transaction emits a 'fail' event carrying the tx_id, a human-readable failure reason, and the ledger sequence."
 
 [[event.fields]]
 name = "tx_id"
@@ -170,6 +175,7 @@ type = "u32"
 struct_name = "EventTransactionCancelled"
 topic       = "cancel"
 emitter_fn  = "transaction_cancelled"
+description = "Asserts that cancel_transaction emits a 'cancel' event carrying the tx_id, a human-readable cancellation reason, and the ledger sequence, distinguishable from 'fail' events."
 
 [[event.fields]]
 name = "tx_id"
@@ -189,6 +195,7 @@ type = "u32"
 struct_name = "EventAdminTransferProposed"
 topic       = "propose"
 emitter_fn  = "admin_transfer_proposed"
+description = "Asserts that propose_admin emits a 'propose' event with the current admin, the proposed admin address, and the ledger sequence, initiating the two-step admin transfer."
 
 [[event.fields]]
 name = "current_admin"
@@ -208,6 +215,7 @@ type = "u32"
 struct_name = "EventAdminTransferred"
 topic       = "admin"
 emitter_fn  = "admin_transferred"
+description = "Asserts that accept_admin emits an 'admin' event with the outgoing and incoming admin addresses and the ledger sequence, completing the two-step admin transfer."
 
 [[event.fields]]
 name = "old_admin"
@@ -227,6 +235,7 @@ type = "u32"
 struct_name = "EventRelaySignerRotated"
 topic       = "relay"
 emitter_fn  = "relay_signer_rotated"
+description = "Asserts that set_relay_signer emits a 'relay' event carrying the previous and new signer addresses and the ledger sequence on every successful rotation."
 
 [[event.fields]]
 name = "old_signer"
@@ -246,6 +255,7 @@ type = "u32"
 struct_name = "EventContractUpgraded"
 topic       = "upgrade"
 emitter_fn  = "contract_upgraded"
+description = "Asserts that upgrade emits an 'upgrade' event with the admin address, the new WASM hash, the ledger sequence, and the schema version the upgrade was validated against."
 
 [[event.fields]]
 name = "admin"
@@ -269,6 +279,7 @@ type = "u32"
 struct_name = "EventPauseToggled"
 topic       = "pause"
 emitter_fn  = "pause_toggled"
+description = "Asserts that pause and unpause emit a 'pause' event with a boolean paused flag, the acting admin address, and the ledger sequence."
 
 [[event.fields]]
 name = "paused"
@@ -288,6 +299,7 @@ type = "u32"
 struct_name = "EventFeeAccrued"
 topic       = "fee"
 emitter_fn  = "fee_accrued"
+description = "Asserts that complete_transaction emits a 'fee' event with the tx_id, the fee amount accrued, the resulting treasury balance, and the ledger sequence."
 
 [[event.fields]]
 name = "tx_id"
@@ -311,6 +323,7 @@ type = "u32"
 struct_name = "EventWithdrawalProposed"
 topic       = "wprop"
 emitter_fn  = "withdrawal_proposed"
+description = "Asserts that propose_withdrawal emits a 'wprop' event with the proposing party, the requested amount, the destination address, and the ledger sequence, initiating the two-party withdrawal flow."
 
 [[event.fields]]
 name = "proposed_by"
@@ -334,6 +347,7 @@ type = "u32"
 struct_name = "EventWithdrawalExecuted"
 topic       = "wexec"
 emitter_fn  = "withdrawal_executed"
+description = "Asserts that execute_withdrawal emits a 'wexec' event with the authorizing party, the withdrawn amount, the destination address, and the resulting treasury balance after the transfer."
 
 [[event.fields]]
 name = "authorized_by"
@@ -357,6 +371,7 @@ type = "i128"
 struct_name = "EventBatchProcessed"
 topic       = "batch"
 emitter_fn  = "batch_processed"
+description = "Asserts that batch_register_callback emits a 'batch' summary event last, after all per-item 'reg' events, carrying the caller, batch size, first and last tx_ids, and the ledger sequence."
 
 [[event.fields]]
 name = "caller"
